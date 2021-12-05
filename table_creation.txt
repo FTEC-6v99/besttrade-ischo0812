@@ -1,0 +1,23 @@
+create table ftec6v99.investor (
+id int not null auto_increment, 
+name varchar (255) not null, 
+status varchar(255) not null, 
+primary key (id)) ;
+
+create table ftec6v99.account (
+account_number int not null auto_increment,
+investor_id int not null,
+balance decimal (12,2) not null,
+primary key (account_number),
+foreign key (investor_id) references investor (id)
+);
+
+create table ftec6v99.portfolio (
+portfolio_id int not null auto_increment, 
+account_number int not null,
+ticker varchar(255) not null,
+quantity int not null,
+purchase_price decimal(12, 2) not null,
+primary key (portfolio_id),
+foreign key (account_number) references account (account_number)
+);
