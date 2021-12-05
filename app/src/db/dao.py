@@ -8,24 +8,31 @@ import typing as t
 from mysql.connector import connect, cursor
 from mysql.connector.connection import MySQLConnection
 import config
-from app.src.domain.Investor import Investor
-from app.src.domain.Account import Account
-from app.src.domain.Portfolio import Portfolio
+from Investor import Investor
+from Account import Account
+from Portfolio import Portfolio
+
+# from app.src.domain.Investor import Investor
+# from app.src.domain.Account import Account
+# from app.src.domain.Portfolio import Portfolio
+
 
 def get_cnx() -> MySQLConnection:
     return connect(**config.dbparams)
 
+
 '''
-    Investor DAO functions
+    # Investor DAO functions
 '''
 
-def get_all_investor() -> list[Investor]:
+
+def get_all_investor() -> t.List[Investor]:
     '''
         Get list of all investors [R]
     '''
     investors: list[Investor] = []
     db_cnx: MySQLConnection = get_cnx()
-    cursor = db_cnx.cursor(dictionary=True) # always pass dictionary = True
+    cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor'
     cursor.execute(sql)
     results: list[dict] = cursor.fetchall()
@@ -34,12 +41,13 @@ def get_all_investor() -> list[Investor]:
     db_cnx.close()
     return investors
 
+
 def get_investor_by_id(id: int) -> t.Optional[Investor]:
     '''
         Returns an investor object given an investor ID [R]
     '''
     db_cnx: MySQLConnection = get_cnx()
-    cursor = db_cnx.cursor(dictionary=True) # always pass dictionary = True
+    cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where id = %s'
     cursor.execute(sql, (id,))
     if cursor.rowcount == 0:
@@ -47,15 +55,16 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
     else:
         row = cursor.fetchone()
         investor = Investor(row['name'], row['status'], row['id'])
-        return investor 
+        return investor
 
-def get_investors_by_name(name: str) -> list[Investor]:
+
+def get_investors_by_name(name: str) -> t.List[Investor]:
     '''
         Return a list of investors for a given name [R]
     '''
     investors: list[Investor] = []
     db_cnx: MySQLConnection = get_cnx()
-    cursor = db_cnx.cursor(dictionary=True) # always pass dictionary = True
+    cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where name = %s'
     cursor.execute(sql, (name,))
     if cursor.rowcount == 0:
@@ -79,6 +88,7 @@ def create_investor(investor: Investor) -> None:
     db_cnx.commit()
     db_cnx.close()
 
+
 def delete_investor(id: int):
     '''
         Delete an investor given an id [D]
@@ -87,8 +97,9 @@ def delete_investor(id: int):
     cursor = db_cnx.cursor()
     sql = 'delete from investor where id = %s'
     cursor.execute(sql, (id,))
-    db_cnx.commit() # inserts, updates, and deletes
+    db_cnx.commit()  # inserts, updates, and deletes
     db_cnx.close()
+
 
 def update_investor_name(id: int, name: str) -> None:
     '''
@@ -101,6 +112,7 @@ def update_investor_name(id: int, name: str) -> None:
     db_cnx.commit()
     db_cnx.close()
 
+
 def update_investor_status(id: int, status: str) -> None:
     '''
         Update the inestor status [U]
@@ -112,55 +124,71 @@ def update_investor_status(id: int, status: str) -> None:
     db_cnx.commit()
     db_cnx.close()
 
+
 '''
     Account DAO functions
 '''
-def get_all_accounts() -> list[Account]:
+
+
+def get_all_accounts() -> t.List[Account]:
     # Code goes here
     pass
+
 
 def get_account_by_id(id: int) -> Account:
     # Code goes here
     pass
 
-def get_accounts_by_investor_id(id: int) -> list[Account]:
+
+def get_accounts_by_investor_id(id: int) -> t.List[Account]:
     # Code goes here
     pass
+
 
 def delete_account(id: int) -> None:
     # Code goes here
     pass
 
+
 def update_acct_balance(id: int, bal: float) -> None:
     # Code goes here
     pass
+
 
 def create_account(account: Account) -> None:
     # Code goes here
     pass
 
+
 '''
     Portfolio DAO functions
 '''
-def get_all_portfolios() -> list[Portfolio]:
+
+
+def get_all_portfolios() -> t.List[Portfolio]:
     # code goes here
     pass
 
-def get_porfolios_by_acct_id(acct_id: int) -> list[Portfolio]:
+
+def get_porfolios_by_acct_id(acct_id: int) -> t.List[Portfolio]:
     # code goes here
     pass
 
-def get_portfolios_by_investor_id(investor_id: int) -> list[Portfolio]:
+
+def get_portfolios_by_investor_id(investor_id: int) -> t.List[Portfolio]:
     # code goes here
     pass
+
 
 def delete_portfolio(id: int) -> None:
     # code goes here
     pass
 
+
 def buy_stock(ticker: str, price: float, quantity: int) -> None:
     # code goes here
     pass
+
 
 def sell_stock(ticket: str, quantity: int, sale_price: float) -> None:
     # 1. update quantity in portfolio table
