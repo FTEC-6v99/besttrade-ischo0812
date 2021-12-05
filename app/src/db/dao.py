@@ -22,11 +22,11 @@ def get_cnx() -> MySQLConnection:
 
 
 '''
-    # Investor DAO functions
+      Investor DAO functions
 '''
 
 
-def get_all_investor() -> t.List[Investor]:
+def get_all_investors() -> t.List[Investor]:
     '''
         Get list of all investors [R]
     '''
@@ -50,7 +50,7 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where id = %s'
     cursor.execute(sql, (id,))
-    if cursor.rowcount == 0:
+    if cursor.rowcount == -1:
         return None
     else:
         row = cursor.fetchone()

@@ -6,11 +6,7 @@ def main():
         host='ftecv99.cbjsrvmj1rmx.us-west-2.rds.amazonaws.com',
         username='admin',
         password='HiDrBourji',
-<<<<<<< HEAD
         database='ftec6v99'
-=======
-        database='ftec6v99',
->>>>>>> b0fe587729f5e648600eaf26655e93a2deafb727
     )
 
     cursor = cnx.cursor()
