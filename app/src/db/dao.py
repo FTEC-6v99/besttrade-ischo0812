@@ -4,10 +4,13 @@
 # R: Read
 # U: Update
 # D: Delete
+
 import typing as t
+
+import config
 from mysql.connector import connect, cursor
 from mysql.connector.connection import MySQLConnection
-import config
+
 from Investor import Investor
 from Account import Account
 from Portfolio import Portfolio
@@ -26,7 +29,7 @@ def get_cnx() -> MySQLConnection:
 '''
 
 
-def get_all_investor() -> t.List[Investor]:
+def get_all_investors() -> t.List[Investor]:
     '''
         Get list of all investors [R]
     '''
@@ -49,7 +52,7 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where id = %s'
-    cursor.execute(sql, (id,))
+    cursor.execute(sql, (id))
     result = cursor.fetchall()
     if len(result) == 0:
         return None
@@ -67,7 +70,7 @@ def get_investors_by_name(name: str) -> t.List[Investor]:
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where name = %s'
-    cursor.execute(sql, (name,))
+    cursor.execute(sql, (name))
     if cursor.rowcount == 0:
         investors = []
     else:
@@ -97,7 +100,7 @@ def delete_investor(id: int):
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'delete from investor where id = %s'
-    cursor.execute(sql, (id,))
+    cursor.execute(sql, (id))
     db_cnx.commit()  # inserts, updates, and deletes
     db_cnx.close()
 
@@ -109,7 +112,7 @@ def update_investor_name(id: int, name: str) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'update investor set name = %s where id = %s'
-    cursor.execute(sql, (id, name))
+    cursor.execute(sql, (name, id))
     db_cnx.commit()
     db_cnx.close()
 
@@ -121,7 +124,7 @@ def update_investor_status(id: int, status: str) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'update investor set status = %s where id = %s'
-    cursor.execute(sql, (id, status))
+    cursor.execute(sql, (status, id))
     db_cnx.commit()
     db_cnx.close()
 
@@ -185,7 +188,7 @@ def delete_account(investor_id: int) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'delete from account where investor_id = %s'
-    cursor.execute(sql, (investor_id,))
+    cursor.execute(sql, (investor_id))
     db_cnx.commit()  # inserts, updates, and deletes
     db_cnx.close()
 

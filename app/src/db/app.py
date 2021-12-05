@@ -1,11 +1,11 @@
 import typing as t
 import json
 import flask
+from flask import Blueprint
 import dao
 import Investor
 
 application = app = flask.Flask(__name__)
-
 
 # @app.route('/')
 # def default():
@@ -21,7 +21,7 @@ application = app = flask.Flask(__name__)
 # def say_hello():
 #     return 'hello!'
 
-
+# 1. Investor a. GET
 @app.route('/investor/get-all')
 def get_all_investors():
     investors: t.List[Investor] = dao.get_all_investor()
@@ -45,6 +45,10 @@ def get_investors_by_name(name):
         return ()
     else:
         return json.dumps(investors, default=lambda x: x.__dict__)
+
+# app.register_blueprint(investor_bp)
+# app.register_blueprint(account_bp)
+# app.register_blueprint(portfolio_bp)
 
 
 if __name__ == '__main__':
