@@ -26,7 +26,7 @@ def get_cnx() -> MySQLConnection:
 '''
 
 
-def get_all_investors() -> t.List[Investor]:
+def get_all_investor() -> t.List[Investor]:
     '''
         Get list of all investors [R]
     '''
@@ -50,10 +50,11 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where id = %s'
     cursor.execute(sql, (id,))
-    if cursor.rowcount == -1:
+    result = cursor.fetchall()
+    if len(result) == 0:
         return None
     else:
-        row = cursor.fetchone()
+        row = result[0]
         investor = Investor(row['name'], row['status'], row['id'])
         return investor
 

@@ -1,6 +1,8 @@
 import typing as t
+import json
 import flask
 import dao
+import Investor
 
 application = app = flask.Flask(__name__)
 
@@ -23,7 +25,7 @@ application = app = flask.Flask(__name__)
 @app.route('/investor/get-all')
 def get_all_investors():
     investors: t.List[Investor] = dao.get_all_investor()
-    return investors
+    return json.dumps(investors, default=lambda x: x.__dict__)
 
 
 @app.route('/investor/<id>')
@@ -31,7 +33,18 @@ def get_investor(id):
     investor = dao.get_investor_by_id(id)
     if investor is None:
         return 'Investor does not exist'
-    return str(investor)
+    return json.dumps(investor, default=lambda x: x.__dict__)
+
+# JSON: the investor object needs to be encoded into a JSON formatted object that the client can understand
+
+
+@app.route('/investors/<name>')
+def get_investors_by_name(name):
+    investors = dao.get_investors_by_name(name)
+    if len(investors) == 0:
+        return ()
+    else:
+        return json.dumps(investors, default=lambda x: x.__dict__)
 
 
 if __name__ == '__main__':
