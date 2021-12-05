@@ -281,8 +281,7 @@ def buy_stock(ticker: str, price: float, quantity: int) -> None:
 
 def sell_stock(ticket: str, quantity: int, sale_price: float) -> None:
 
-
-def update_stockqty(ticker: str, quantity: int) -> None:
+    # def update_stockqty(ticker: str, quantity: int) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'update portfolio set stock_qty=10 where ticker=MSFT'
