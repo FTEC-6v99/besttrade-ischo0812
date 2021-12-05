@@ -6,22 +6,17 @@
 # D: Delete
 
 import typing as t
-
-import config
+from config import dbparams
 from mysql.connector import connect, cursor
 from mysql.connector.connection import MySQLConnection
 
-from Investor import Investor
-from Account import Account
-from Portfolio import Portfolio
-
-# from app.src.domain.Investor import Investor
-# from app.src.domain.Account import Account
-# from app.src.domain.Portfolio import Portfolio
+from app.src.domain.Investor import Investor
+from app.src.domain.Portfolio import Portfolio
+from app.src.domain.Account import Account
 
 
 def get_cnx() -> MySQLConnection:
-    return connect(**config.dbparams)
+    return connect(**dbparams)
 
 
 '''
@@ -52,7 +47,7 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where id = %s'
-    cursor.execute(sql, (id))
+    cursor.execute(sql, (id,))
     result = cursor.fetchall()
     if len(result) == 0:
         return None
@@ -70,7 +65,7 @@ def get_investors_by_name(name: str) -> t.List[Investor]:
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
     sql: str = 'select * from investor where name = %s'
-    cursor.execute(sql, (name))
+    cursor.execute(sql, (name,))
     if cursor.rowcount == 0:
         investors = []
     else:
@@ -100,7 +95,7 @@ def delete_investor(id: int):
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'delete from investor where id = %s'
-    cursor.execute(sql, (id))
+    cursor.execute(sql, (id,))
     db_cnx.commit()  # inserts, updates, and deletes
     db_cnx.close()
 
@@ -188,7 +183,7 @@ def delete_account(investor_id: int) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'delete from account where investor_id = %s'
-    cursor.execute(sql, (investor_id))
+    cursor.execute(sql, (investor_id,))
     db_cnx.commit()  # inserts, updates, and deletes
     db_cnx.close()
 
@@ -208,7 +203,8 @@ def create_account(account: Account) -> None:
     db_cnx = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'insert into account (account_number, investor_id, balance) values (%s, %s, %s)'
-    cursor.execute(sql, (account_number, investor_id, balance))
+    cursor.execute(sql, (account.account_number,
+                   account.investor_id, account.balance))
     db_cnx.commit()
     db_cnx.close()
 

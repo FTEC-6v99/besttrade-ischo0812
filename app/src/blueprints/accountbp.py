@@ -1,8 +1,9 @@
 import typing as t
 import json
 from flask import Blueprint
-import dao
-import Account
+import app.src.db.dao as dao
+
+from app.src.domain.Account import Account
 
 account_bp = bp = Blueprint('account', __name__, url_prefix='/account')
 
@@ -55,7 +56,7 @@ def update_acct_balance(investor_id, account_balance):
     return '', 200
 
 
-@ bp.route('/delete-account/<id>', methods=['DELETE'])
-def delete_account(id):
-    dao.delete_account(id)
+@ bp.route('/delete-account/<investor_id>', methods=['DELETE'])
+def delete_account(investor_id):
+    dao.delete_account(investor_id)
     return '', 200

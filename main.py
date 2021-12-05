@@ -1,2 +1,2 @@
-import sys
-print(sys.path)
+import config
+print(config.dbparams)

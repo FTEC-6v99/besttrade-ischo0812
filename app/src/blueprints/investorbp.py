@@ -1,8 +1,9 @@
 import typing as t
 import json
 from flask import Blueprint
-import dao
-import Investor
+import app.src.db.dao as dao
+
+from app.src.domain.Investor import Investor
 
 investor_bp = bp = Blueprint('investor', __name__, url_prefix='/investor')
 
@@ -25,7 +26,7 @@ def get_investor_by_id(id: int):
 
 
 @bp.route('/get-investors-by-name/<name>')
-def get_investors_by_name(name):
+def get_investors_by_name(name: str):
     investors: t.List[Investor] = dao.get_investors_by_name(name)
     if len(investors) == 0:
         return json.dumps([])
@@ -40,14 +41,14 @@ def create_investor(name, status):
     return '', 200
 
 
-@ bp.route('/updateinvestor-name/<id>/<name>', methods=['PUT'])
+@ bp.route('/update-investor-name/<id>/<name>', methods=['PUT'])
 def update_investor_name(id, name):
     dao.update_investor_name(id, name)
     return '', 200
 
 
 @ bp.route('/update-investor-status/<id>/<status>', methods=['PUT'])
-def update_investor_name(id, status):
+def update_investor_status(id, status):
     dao.update_investor_status(id, status)
     return '', 200
 
