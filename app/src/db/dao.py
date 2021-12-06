@@ -248,7 +248,7 @@ def get_portfolio_by_acct_no(account_number: int) -> t.List[Portfolio]:
     return portfolios
 
 
-def get_portfolios_by_investor_id(investor_id: int) -> t.List[Portfolio]:
+def get_portfolio_by_investor_id(investor_id: int) -> t.List[Portfolio]:
     # Read
     db_cnx: MySQLConnection = get_cnx()
     cur = db_cnx.cursor(dictionary=True)
@@ -266,7 +266,6 @@ def get_portfolios_by_investor_id(investor_id: int) -> t.List[Portfolio]:
 
 
 def delete_portfolio(account_number: int, ticker: str) -> None:
-    # Delete
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
     sql = 'delete from portfolio where account_number = %s and ticker = %s'
