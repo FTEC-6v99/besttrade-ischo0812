@@ -13,6 +13,7 @@ from mysql.connector.connection import MySQLConnection
 from app.src.domain.Investor import Investor
 from app.src.domain.Account import Account
 from app.src.domain.Portfolio import Portfolio
+from app.src.domain.Portfolio import Portfolio1
 
 
 def get_cnx() -> MySQLConnection:
@@ -223,7 +224,7 @@ def get_all_portfolios() -> t.List[Portfolio]:
     portfolios = []
     for row in rows:
         portfolios.append(
-            Portfolio(row['account_number'], row['ticker'],
+            Portfolio(row['portfolio_id'], row['account_number'], row['ticker'],
                       row['quantity'], row['purchase_price'])
         )
     cnx.close()
@@ -233,7 +234,7 @@ def get_all_portfolios() -> t.List[Portfolio]:
 def get_portfolio_by_acct_no(account_number: int) -> t.List[Portfolio]:
     db_cnx: MySQLConnection = get_cnx()
     cur = db_cnx.cursor(dictionary=True)
-    sql = 'select account_number, ticker, quantity, purchase_price from portfolio where account_number=%s'
+    sql = 'select portfolio_id, account_number, ticker, quantity, purchase_price from portfolio where account_number=%s'
     cur.execute(sql, (account_number,))
     rows = cur.fetchall()
     if len(rows) == 0:
@@ -241,25 +242,25 @@ def get_portfolio_by_acct_no(account_number: int) -> t.List[Portfolio]:
     portfolios = []
     for row in rows:
         portfolios.append(
-            Portfolio(row['account_number'], row['ticker'],
+            Portfolio(row['portfolio_id'], row['account_number'], row['ticker'],
                       row['quantity'], row['purchase_price'])
         )
     db_cnx.close()
     return portfolios
 
 
-def get_portfolio_by_investor_id(investor_id: int) -> t.List[Portfolio]:
+def get_portfolio_by_investor_id(investor_id: int) -> t.List[Portfolio1]:
     # Read
     db_cnx: MySQLConnection = get_cnx()
     cur = db_cnx.cursor(dictionary=True)
-    sql = 'select a.account_number, a.ticker, a.quantity, a.purchase_price, b.investor_id from portfolio a left join account b on a.account_number=b.account_number where b.investor_id=%s'
+    sql = 'select b.investor_id, a.account_number, a.ticker, a.quantity, a.purchase_price from portfolio a left join account b on a.account_number=b.account_number where b.investor_id=%s'
     cur.execute(sql, (investor_id,))
     rows = cur.fetchall()
     if len(rows) == 0:
         return []
-    portfolios: list[Portfolio] = []
+    portfolios: list[Portfolio1] = []
     for row in rows:
-        portfolios.append(Portfolio(row['investor_id'], row['account_number'],
+        portfolios.append(Portfolio1(row['investor_id'], row['account_number'],
                           row['ticker'], row['quantity'], row['purchase_price']))
     db_cnx.close()
     return portfolios

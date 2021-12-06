@@ -4,6 +4,7 @@ from flask import Blueprint
 import app.src.db.dao as dao
 
 from app.src.domain.Portfolio import Portfolio
+from app.src.domain.Portfolio import Portfolio1
 
 portfolio_bp = bp = Blueprint('portfolio', __name__, url_prefix='/portfolio')
 
@@ -27,7 +28,7 @@ def get_portfolio_by_acct_no(account_number: int):
 
 @bp.route('/get-portfolio-by-investor-id/<int:investor_id>')
 def get_portfolio_by_investor_id(investor_id: int):
-    portfolio: Portfolio = dao.get_portfolio_by_investor_id(investor_id)
+    portfolio: Portfolio1 = dao.get_portfolio_by_investor_id(investor_id)
     if portfolio is None:
         return json.dumps('')
     return json.dumps(portfolio, default=lambda x: x.__dict__)
