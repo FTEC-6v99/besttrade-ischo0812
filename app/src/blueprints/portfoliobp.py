@@ -10,16 +10,24 @@ portfolio_bp = bp = Blueprint('portfolio', __name__, url_prefix='/portfolio')
 
 @bp.route('/get-all-portfolios')
 def get_all_portfolios():
-    portfolios: t.List[portfolio] = dao.get_all_portfolios()
+    portfolios: t.List[Portfolio] = dao.get_all_portfolios()
     if len(portfolios) == 0:
         return json.dumps([])
     else:
         return json.dumps(portfolios, default=lambda x: x.__dict__)
 
 
-@bp.route('/get_portfolio_by_id/<int:id>')
-def get_portfolio_by_id(id: int):
-    portfolio: portfolio = dao.get_portfolio_by_id(id)
+@bp.route('/get-portfolio-by-acct-no/<int:account_number>')
+def get_portfolio_by_acct_no(account_number: int):
+    portfolio: Portfolio = dao.get_portfolio_by_acct_no(account_number)
+    if portfolio is None:
+        return json.dumps('')
+    return json.dumps(portfolio, default=lambda x: x.__dict__)
+
+
+@bp.route('/get-portfolio-by-investor-id/<int:investor_id>')
+def get_portfolios_by_investor_id(investor_id: int):
+    portfolio: Portfolio = dao.get_portfolios_by_investor_id(investor_id)
     if portfolio is None:
         return json.dumps('')
     return json.dumps(portfolio, default=lambda x: x.__dict__)
@@ -27,7 +35,7 @@ def get_portfolio_by_id(id: int):
 
 @bp.route('/get-portfolios-by-name/<name>')
 def get_portfolios_by_name(name):
-    portfolios: t.List[portfolio] = dao.get_portfolios_by_name(name)
+    portfolios: t.List[Portfolio] = dao.get_portfolios_by_name(name)
     if len(portfolios) == 0:
         return json.dumps([])
     else:
@@ -36,12 +44,12 @@ def get_portfolios_by_name(name):
 
 @ bp.route('/create-new-portfolio/<name>/<status>', methods=['POST'])
 def create_portfolio(name, status):
-    portfolio: portfolio = portfolio(name, status)
+    portfolio: Portfolio = Portfolio(name, status)
     dao.create_portfolio(portfolio)
     return '', 200
 
 
-@ bp.route('/updateportfolio-name/<id>/<name>', methods=['PUT'])
+@ bp.route('/update-portfolio-name/<id>/<name>', methods=['PUT'])
 def update_portfolio_name(id, name):
     dao.update_portfolio_name(id, name)
     return '', 200

@@ -5,6 +5,5 @@ class Investor():
         self.name = name
         self.status = status
 
-
-# def __str__(self):
-#     return f'id: {self.id} | name: {self.name} | status: {self.status}'
+    def __str__(self):
+        return f'id: {self.id} | name: {self.name} | status: {self.status}'

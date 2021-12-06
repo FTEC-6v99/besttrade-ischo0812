@@ -34,7 +34,7 @@ def get_investors_by_name(name: str):
         return json.dumps(investors, default=lambda x: x.__dict__)
 
 
-@ bp.route('/create-new-investor/<name>/<status>', methods=['POST'])
+@ bp.route('/create-investor/<name>/<status>', methods=['POST'])
 def create_investor(name, status):
     investor: Investor = Investor(name, status)
     dao.create_investor(investor)

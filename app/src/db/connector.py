@@ -10,11 +10,11 @@ def main():
     )
 
     cursor = cnx.cursor()
-    sql = 'select * from investor'
+    sql = 'select * from account'
     cursor.execute(sql)
-    investors = cursor.fetchall()
-    for investor in investors:
-        print(investor)
+    accounts = cursor.fetchall()
+    for account in accounts:
+        print(account)
 
 
 if __name__ == '__main__':

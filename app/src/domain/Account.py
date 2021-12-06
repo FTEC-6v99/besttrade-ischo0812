@@ -6,3 +6,6 @@ class Account():
         self.account_number = account_number
         self.investor_id = investor_id
         self.balance = balance
+
+    def __str__(self):
+        return f'account number: {self.account_number} | investor id: {self.investor_id} | balance: {self.balance}'
