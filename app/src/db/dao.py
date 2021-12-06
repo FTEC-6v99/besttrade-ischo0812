@@ -56,6 +56,7 @@ def get_investor_by_id(id: int) -> t.Optional[Investor]:
         row = result[0]
         investor = Investor(row['name'], row['status'], row['id'])
         return investor
+    db_cnx.close()
 
 
 def get_investors_by_name(name: str) -> t.List[Investor]:
@@ -146,6 +147,8 @@ def get_all_accounts() -> t.List[Account]:
     db_cnx.close()
     return accounts
 
+# ID from Investor table and merge it with Investor_ID in Account table
+
 
 def get_account_by_id(id: int) -> Account:
     '''
@@ -162,6 +165,7 @@ def get_account_by_id(id: int) -> Account:
         account = Account(row['account_number'],
                           row['investor_id'], row['balance'])
         return account
+    db_cnx.close()
 
 
 def get_accounts_by_investor_id(investor_id: int) -> t.List[Account]:
@@ -275,14 +279,12 @@ def delete_portfolio(account_number: int, ticker: str) -> None:
     db_cnx.close()
 
 
-def buy_stock(account_number: int, ticker: str, buy_price: float, volume: int) -> None:
-    # Read
-    # 1. update quantity in portfolio table
-    # 2. update the account balance:
+def buy_stock(account_number: int, ticker: str, quantity: int, purchase_price: float) -> None:
 
-    volume = int(volume)
-    buy_price = float(buy_price)
-    # Retrieve current balance
+    quantity = int(quantity)
+    purchase_price = float(purchase_price)
+
+    # Check Current Price
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
     sql: str = 'select balance from account where account_number=%s'
@@ -291,17 +293,18 @@ def buy_stock(account_number: int, ticker: str, buy_price: float, volume: int) -
     current_balance = float(row[0])
     db_cnx.close()
 
-    # check if funds are sufficient
+    # Check if funds in the account are sufficient
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
-    total_stock_price = buy_price*volume
-    if total_stock_price > current_balance:
-        print("Insufficient Funds to make this Trade")
-        return None
-
-    # update balance
-    sql: str = 'update account set balance=balance-%s where account_number=%s'
-    cursor.execute(sql, (total_stock_price, account_number))
+    total_purchase_price = purchase_price*quantity
+    if total_purchase_price <= current_balance:
+        new_balance = current_balance - total_purchase_price
+    else:
+        new_balance = current_balance
+        print("Insufficient fund in your account")
+    # update new_balance
+    sql: str = 'update account set balance = %s where account_number = %s'
+    cursor.execute(sql, (new_balance, account_number))
     db_cnx.commit()
     db_cnx.close()
 
@@ -323,16 +326,14 @@ def buy_stock(account_number: int, ticker: str, buy_price: float, volume: int) -
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
     if ticker not in stocks:
-        sql: str = 'insert into portfolio(account_number, ticker, quantity, purchase_price) values (%s,%s,%s,%s)'
-        cursor.execute(sql, (account_number, ticker, volume, buy_price))
+        sql: str = 'insert into portfolio (account_number, ticker, quantity, purchase_price) values (%s,%s,%s,%s)'
+        cursor.execute(sql, (account_number, ticker, quantity, purchase_price))
         db_cnx.commit()
-
     else:
         sql: str = 'update portfolio set quantity=quantity+%s where account_number=%s and ticker=%s'
-        cursor.execute(sql, (volume, account_number, ticker))
+        cursor.execute(sql, (account_number, ticker, quantity))
         db_cnx.commit()
-
-    db_cnx.close()
+        db_cnx.close()
 
     # get current quantity
     db_cnx: MySQLConnection = get_cnx()
@@ -343,16 +344,17 @@ def buy_stock(account_number: int, ticker: str, buy_price: float, volume: int) -
     current_quantity = row[0]
     db_cnx.close()
 
-    # average out purchase price
+    # average purchase price
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
     sql: str = 'update portfolio set purchase_price=((purchase_price*%s)+(%s*%s))/(%s+%s)'
-    cursor.execute(sql, (current_quantity, volume,
-                   buy_price, current_quantity, volume))
+    cursor.execute(sql, (current_quantity, quantity,
+                   purchase_price, current_quantity, quantity))
     db_cnx.commit()
+    db_cnx.close()
 
 
-def sell_stock(account_number: int, ticker: str, sale_price: float, volume: int) -> None:
+def sell_stock(account_number: int, ticker: str, sale_price: float, quantity: int) -> None:
     # 1. update quantity in portfolio table
     # 2. update the account balance:
     # Example: 10 APPL shares at $1/share with account balance $100
@@ -361,7 +363,9 @@ def sell_stock(account_number: int, ticker: str, sale_price: float, volume: int)
     # Read Function
 
     # sale_price*volume to get total dollars
-    volume = int(volume)
+    quantity = int(quantity)
+    sale_price = float(sale_price)
+
     # get current quantity
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
@@ -374,27 +378,28 @@ def sell_stock(account_number: int, ticker: str, sale_price: float, volume: int)
     # make sure not to sell more than we have
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
-    if current_quantity < volume:
-        print("You do not have sufficient shares to sell")
+    if current_quantity < quantity:
+        print("Not sufficient number of shares to sell")
         return None
 
-    elif current_quantity == volume:
+    elif current_quantity == quantity:
         sql: str = 'delete from portfolio where account_number=%s and ticker=%s'
         cursor.execute(sql, (account_number, ticker))
         db_cnx.commit()
 
-    elif current_quantity > volume:
+    elif current_quantity > quantity:
         sql: str = 'update portfolio set quantity=%s-%s where account_number=%s and ticker=%s'
-        cursor.execute(sql, (current_quantity, volume, account_number, ticker))
+        cursor.execute(
+            sql, (current_quantity, quantity, account_number, ticker))
         db_cnx.commit()
     db_cnx.close()
 
     # update balance with total sale price
-    total_sale = sale_price*volume
+    total_sale_price = sale_price*quantity
     db_cnx: MySQLConnection = get_cnx()
     cursor = db_cnx.cursor()
     sql: str = 'update account set balance=balance+%s where account_number=%s'
-    cursor.execute(sql, (total_sale, account_number))
+    cursor.execute(sql, (total_sale_price, account_number))
     db_cnx.commit()
 
     db_cnx: MySQLConnection = get_cnx()

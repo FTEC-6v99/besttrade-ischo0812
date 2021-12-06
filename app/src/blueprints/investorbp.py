@@ -17,7 +17,7 @@ def get_all_investors():
         return json.dumps(investors, default=lambda x: x.__dict__)
 
 
-@bp.route('/get_investor_by_id/<int:id>')
+@bp.route('/get-investor-by-id/<int:id>')
 def get_investor_by_id(id: int):
     investor: Investor = dao.get_investor_by_id(id)
     if investor is None:
