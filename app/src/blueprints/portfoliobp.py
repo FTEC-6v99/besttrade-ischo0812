@@ -40,21 +40,13 @@ def delete_portfolio(account_number, ticker):
     return '', 200
 
 
-@bp.route('/buy-stock/<account_number>/<ticker>/<quantity>/<purchase_price>', methods=['PUT'])
-def buy_stock(account_number, ticker, quantity, purchase_price):
-    portfolio = Portfolio(account_number, ticker, quantity, purchase_price)
-    try:
-        dao.buy_stock(portfolio)
-        return json.dumps(portfolio.__dict__)
-    except Exception as e:
-        return 'Error occurred:' + str(e), 500
+@bp.route('/buy-stock/<account_number>/<ticker>/<buy_price>/<unit>', methods=['POST'])
+def buy_stock(account_number: int, ticker: str, buy_price: float, unit: int):
+    dao.buy_stock(account_number, ticker, buy_price, unit)
+    return f'{unit} shares of {ticker} were bought at {buy_price}', 200
 
 
-@bp.route('/sell-stock/<account_number>/<ticker>/<quantity>/<purchase_price>', methods=['PUT'])
-def sell_stock(account_number, ticker, quantity, purchase_price):
-    portfolio = Portfolio(account_number, ticker, quantity, purchase_price)
-    try:
-        dao.sell_stock(portfolio)
-        return json.dumps(portfolio.__dict__)
-    except Exception as e:
-        return 'Error occurred:' + str(e), 500
+@bp.route('/sell-stock/<account_number>/<ticker>/<sell_price>/<unit>', methods=['POST'])
+def sell_stock(account_number: int, ticker: str, sell_price: float, unit: int):
+    dao.sell_stock(account_number, ticker, sell_price, unit)
+    return f'{unit} shares of {ticker} were sold at {sell_price}', 200
