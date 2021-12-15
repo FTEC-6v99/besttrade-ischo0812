@@ -1,0 +1,21 @@
+<!doctype html>
+<title> Best Trade - Investors</title>
+
+<body>
+    <div>
+        <h1> Investor Page</h1>
+        <a href="/home">Return to home page</a>
+    </div>
+    <div>
+        <p>Best Trade is supported by many valuable investors
+        </p>
+        <p>
+            Investors incldue:
+        </p>
+        <ul>
+            {% for investor in investors %}
+            <li>{{investor}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>

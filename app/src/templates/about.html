@@ -1,0 +1,21 @@
+<!doctype html>
+<title> Best Trade - About</title>
+
+<body>
+    <div>
+        <h1> About Page</h1>
+        <a href="/home">Return to home page</a>
+    </div>
+    <div>
+        <p>Best Trade is a free platform for trading stock, stock options and review their portfolio!
+        </p>
+        <p>
+            There are many stocks that you can trade on this platform. Most popular stocks incldue:
+        </p>
+        <ul>
+            {% for stock in stocks %}
+            <li>{{stock}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>

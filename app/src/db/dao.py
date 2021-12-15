@@ -126,6 +126,28 @@ def update_investor_status(id: int, status: str) -> None:
     db_cnx.close()
 
 
+def get_popular_stocks():
+    db_cnx = get_cnx()
+    cursor = db_cnx.cursor(dictionary=True)
+    sql: str = 'select * from POPULAR_STOCKS order by 1 limit 4'
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    ticker_names = [row['ticker'] for row in rows]
+    db_cnx.close()
+    return ticker_names
+
+
+def get_investors():
+    db_cnx = get_cnx()
+    cursor = db_cnx.cursor(dictionary=True)
+    sql: str = 'select name from investor'
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    investor_names = [row['name'] for row in rows]
+    db_cnx.close()
+    return investor_names
+
+
 '''
     Account DAO functions
 '''
