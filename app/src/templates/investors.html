@@ -6,7 +6,7 @@
         <h1> Investor Page</h1>
         <a href="/home">Return to home page</a>
     </div>
-    <div>
+    <!-- <div>
         <p>Best Trade is supported by many valuable investors
         </p>
         <p>
@@ -17,5 +17,20 @@
             <li>{{investor}}</li>
             {% endfor %}
         </ul>
-    </div>
+    </div> -->
+    <table>
+        <tr>
+            <th>Investor ID</th>
+            <th>Investor Name</th>
+            <th>Investor Staus</th>
+        </tr>
+        {% for investor in investors %}
+        <tr>
+            <td> {{ investor.id }}</td>
+            <td> {{ investor.name }}</td>
+            <td> {{ investor.status }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
 </body>

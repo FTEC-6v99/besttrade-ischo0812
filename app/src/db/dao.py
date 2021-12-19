@@ -41,6 +41,22 @@ def get_all_investors() -> t.List[Investor]:
     return investors
 
 
+def get_all_investor() -> t.List[Investor]:
+    '''
+        Get list of all investors [R]
+    '''
+    investors: list[Investor] = []
+    db_cnx: MySQLConnection = get_cnx()
+    cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
+    sql: str = 'select * from investor'
+    cursor.execute(sql)
+    results: list[dict] = cursor.fetchall()
+    for row in results:
+        investors.append(Investor(row['name'], row['status'], row['id']))
+    db_cnx.close()
+    return investors
+
+
 def get_investor_by_id(id: int) -> t.Optional[Investor]:
     '''
         Returns an investor object given an investor ID [R]
@@ -137,13 +153,28 @@ def get_popular_stocks():
     return ticker_names
 
 
-def get_investors():
-    db_cnx = get_cnx()
-    cursor = db_cnx.cursor(dictionary=True)
-    sql: str = 'select name from investor'
+# def get_investors():
+#     db_cnx = get_cnx()
+#     cursor = db_cnx.cursor(dictionary=True)
+#     sql: str = 'select name from investor'
+#     cursor.execute(sql)
+#     rows = cursor.fetchall()
+#     investor_names = [row['name'] for row in rows]
+#     db_cnx.close()
+#     return investor_names
+
+def get_investors() -> t.List[Investor]:
+    '''
+        Get list of all investors [R]
+    '''
+    investor_names: list[Investor] = []
+    db_cnx: MySQLConnection = get_cnx()
+    cursor = db_cnx.cursor(dictionary=True)  # always pass dictionary = True
+    sql: str = 'select * from investor'
     cursor.execute(sql)
-    rows = cursor.fetchall()
-    investor_names = [row['name'] for row in rows]
+    results: list[dict] = cursor.fetchall()
+    for row in results:
+        investor_names.append(Investor(row['id'], row['name'], row['status']))
     db_cnx.close()
     return investor_names
 
