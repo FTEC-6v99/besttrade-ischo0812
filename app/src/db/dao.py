@@ -153,16 +153,6 @@ def get_popular_stocks():
     return ticker_names
 
 
-# def get_investors():
-#     db_cnx = get_cnx()
-#     cursor = db_cnx.cursor(dictionary=True)
-#     sql: str = 'select name from investor'
-#     cursor.execute(sql)
-#     rows = cursor.fetchall()
-#     investor_names = [row['name'] for row in rows]
-#     db_cnx.close()
-#     return investor_names
-
 def get_investors() -> t.List[Investor]:
     '''
         Get list of all investors [R]

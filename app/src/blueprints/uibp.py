@@ -33,8 +33,3 @@ def investor():
         'investors': all_investors
     }
     return render_template('investors.html', **data)
-
-# @bp.route('/investors', methods=['GET'])
-# def investor():
-#     investors = dao.get_investors()
-#     return render_template('investors.html', investors=investors)
